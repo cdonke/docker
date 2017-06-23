@@ -1,5 +1,5 @@
 [CmdletBinding()]
-Param([switch]$RemoveEndFinished, [string]$Password="P@ssw0rd", [string]$DBPath=$null)
+Param([switch]$RemoveWhenFinished, [string]$Password="P@ssw0rd", [string]$DBPath=$null)
 
 $args = @();
 $args += "run"
@@ -8,7 +8,7 @@ $args += "-p 1433:1433"
 $args += "-e sa_password=$Password"
 $args += "-e ACCEPT_EULA=Y"
 
-if ($RemoveEndFinished.IsPresent) {
+if ($RemoveWhenFinished.IsPresent) {
     $args+="--rm"
 }
 

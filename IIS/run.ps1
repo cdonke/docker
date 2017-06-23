@@ -1,10 +1,10 @@
 [CmdletBinding()]
-Param([switch]$RemoveEndFinished, [int]$Port=80, [string]$Path, [string]$Name)
+Param([switch]$RemoveWhenFinished, [int]$Port=80, [string]$Path, [string]$Name)
 
 $args=@();
 
 $args += "run"
-if ($RemoveEndFinished.IsPresent) {
+if ($RemoveWhenFinished.IsPresent) {
     $args+="--rm"
 }
 if ($Name) {
