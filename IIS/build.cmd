@@ -1,0 +1,1 @@
+docker build . -t cdonke/iis:nanoserver -f .\Dockerfile.nanoserver
