@@ -1,0 +1,1 @@
+docker run -d -v c:/temp/jupyter:/notebooks -p 8888:8888 --name jupyter jupyter:3
