@@ -22,9 +22,8 @@ spec:
           name: notebooks-volume
       volumes:
       - name: notebooks-volume
-        hostPath:
-          path: /run/desktop/mnt/host/wsl/c/temp/jupyter
-          type: Directory
+        persistentVolumeClaim:
+          claimName: notebooks-pv-claim
 ---
 apiVersion: v1
 kind: Service
@@ -40,3 +39,30 @@ spec:
   selector:
     app: jupyter
   type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: notebooks-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: local-folder
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /run/desktop/mnt/host/wsl/c/temp/jupyter
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: notebooks-pv-claim
+spec:
+  storageClassName: local-folder
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi

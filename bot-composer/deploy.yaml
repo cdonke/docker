@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: bot-composer
+  name: bot-composer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bot-composer
+  template:
+    metadata:
+      labels:
+        app: bot-composer
+    spec:
+      containers:
+      - image: bot-composer:v1.0.2
+        name: bot-composer
+        env:
+          - name: COMPOSER_BOTS_FOLDER
+            value: "/Bots"
+          - name: COMPOSER_RUNTIME_FOLDER
+            value: "/runtime"
+          - name: COMPOSER_APP_DATA
+            value: "/appdata/data.json"
+          - name: PORT
+            value: "3000"
+          - name: BOT_ENDPOINT
+            value: "http://0.0.0.0:3979"        
+        volumeMounts:
+          - mountPath: /Bots
+            name: bots-volume
+          - mountPath: /appdata
+            name: appdata-volume
+          - mountPath: /runtime
+            name: runtime-volume
+          - mountPath: /runtime
+            name: runtime-volume
+      volumes:
+      - name: bots-volume
+        persistentVolumeClaim:
+          claimName: bots-pv-claim        
+      - name: appdata-volume
+        emptyDir: {}    
+      - name: runtime-volume
+        persistentVolumeClaim:
+          claimName: runtime-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: bot-composer
+  name: bot-composer
+spec:
+  ports:
+  - name: frontend
+    protocol: TCP
+    port: 3000
+    targetPort: 3000
+  - name: bot
+    protocol: TCP
+    port: 3979
+    targetPort: 3979
+  selector:
+    app: bot-composer
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: bots-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: local-folder
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /run/desktop/mnt/host/wsl/c/Users/chrido/Documents/Composer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bots-pv-claim
+spec:
+  storageClassName: local-folder
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: runtime-pv-claim
+spec:
+  storageClassName: local-folder-runtime
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: runtime-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: local-folder-runtime
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /run/desktop/mnt/host/wsl/c/Projects/cdonke/BotFramework-Composer/runtime
