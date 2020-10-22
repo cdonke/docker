@@ -35,8 +35,6 @@ spec:
             name: appdata-volume
           - mountPath: /runtime
             name: runtime-volume
-          - mountPath: /runtime
-            name: runtime-volume
       volumes:
       - name: bots-volume
         persistentVolumeClaim:
@@ -59,10 +57,18 @@ spec:
     protocol: TCP
     port: 3000
     targetPort: 3000
-  - name: bot
+  - name: bot-1
     protocol: TCP
     port: 3979
     targetPort: 3979
+  - name: bot-2
+    protocol: TCP
+    port: 3980
+    targetPort: 3980
+  - name: bot-3
+    protocol: TCP
+    port: 3981
+    targetPort: 3981
   selector:
     app: bot-composer
   type: LoadBalancer
